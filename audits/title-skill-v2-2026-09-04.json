@@ -1,0 +1,53 @@
+{
+  "schema_version": "sieve-audit/v2",
+  "target": {"path": "~/repos/title-skill", "name": "title-skill"},
+  "audit_context": {"model": "unknown", "provider": "unknown", "model_version": "unknown", "audited_at": "2026-09-04T20:00:00+08:00"},
+  "summary": {
+    "recommendation": "compress", "confidence": "low",
+    "counts": {
+      "asset_types": {"generic": 0, "temporary": 0, "proprietary": 2, "mixed": 1, "unknown": 0, "not_applicable": 1},
+      "artifact_roles": {"instruction": 1, "reference": 1, "source": 1, "test": 0, "asset": 0, "metadata": 0, "generated": 0, "binary": 0, "secret": 1, "historical": 0}
+    },
+    "note": "建议压缩固定生产线，但保留真实标题资产、事实边界和发布契约；当前行为验证失败。"
+  },
+  "items": [
+    {
+      "id": "title-workflow", "source": {"path": "SKILL.md", "line": 159, "section": "执行点击生产线"},
+      "summary": "固定 32→16→12→10 的候选生产线。", "asset_type": "mixed", "artifact_role": "instruction", "lifecycle": "model_dependent",
+      "replacement_evidence": {"level": "E1", "basis": "固定数量可能随模型能力变化，但没有有/无 Skill 对照。"},
+      "behavior_validation": {"status": "failed", "evidence": "逐个执行 scripts/test_*.py：共 9 个入口，1 个因版本契约不一致失败。", "checks_run": 9},
+      "dependency": {"state": "entrypoint", "external_callers_checked": false}, "confidence": "low",
+      "reason": "流程有结构价值，但固定漏斗尚无替代证据，且当前版本契约失败。", "recommendation": "compress", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["仓库契约测试"], "not_verified": ["真实标题质量", "外部调用方"]}
+    },
+    {
+      "id": "title-private-assets", "source": {"path": "data/learned-titles.md", "line": 1, "section": "听曲库"},
+      "summary": "历史选中标题、失败记录和读者偏好资产。", "asset_type": "proprietary", "artifact_role": "reference", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "模型无法从通用参数恢复未提供的私有历史偏好。"},
+      "behavior_validation": {"status": "not_applicable", "evidence": "", "checks_run": 0},
+      "dependency": {"state": "direct", "external_callers_checked": false}, "confidence": "low",
+      "reason": "这是业务记忆，不是通用提示词。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["样本时效", "外部调用方"]}
+    },
+    {
+      "id": "title-release-contract", "source": {"path": "scripts/export_selected_title.py", "line": 1, "section": "发布契约"},
+      "summary": "导出唯一标题和来源 SHA 的确定性发布契约。", "asset_type": "proprietary", "artifact_role": "source", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "确定性跨 Skill 契约不能由模型临场发挥等价替代。"},
+      "behavior_validation": {"status": "failed", "evidence": "整体 9 个测试入口中 1 个版本契约测试失败；导出脚本自身测试通过。", "checks_run": 9},
+      "dependency": {"state": "direct", "external_callers_checked": false}, "confidence": "low",
+      "reason": "发布链依赖可验证的唯一标题和 SHA。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["导出标题契约"], "not_verified": ["全部下游调用方"]}
+    },
+    {
+      "id": "title-secret", "source": {"path": ".env", "line": 0, "section": "敏感文件，仅报告存在"},
+      "summary": "检测到敏感配置，未读取内容。", "asset_type": "not_applicable", "artifact_role": "secret", "lifecycle": "not_applicable",
+      "replacement_evidence": {"level": "E0", "basis": "敏感文件不参与替代判断。"},
+      "behavior_validation": {"status": "not_applicable", "evidence": "", "checks_run": 0},
+      "dependency": {"state": "external_unknown", "external_callers_checked": false}, "confidence": "low",
+      "reason": "只能人工核对用途与轮换策略。", "recommendation": "human_review", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["内容", "外部调用方"]}
+    }
+  ],
+  "human_decisions": ["是否压缩固定候选漏斗", "是否修复版本契约失败"],
+  "not_performed": ["未修改、移动、归档或删除目标 Skill"]
+}

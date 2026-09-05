@@ -1,0 +1,55 @@
+{
+  "schema_version": "sieve-audit/v2",
+  "target": {"path": "~/repos/example-skill", "name": "example-skill"},
+  "audit_context": {
+    "model": "unknown",
+    "provider": "unknown",
+    "model_version": "unknown",
+    "audited_at": "2026-09-04T12:00:00+08:00"
+  },
+  "summary": {
+    "recommendation": "needs_comparison",
+    "confidence": "low",
+    "counts": {
+      "asset_types": {"generic": 0, "temporary": 0, "proprietary": 0, "mixed": 0, "unknown": 1, "not_applicable": 1},
+      "artifact_roles": {"instruction": 1, "reference": 0, "source": 0, "test": 0, "asset": 0, "metadata": 0, "generated": 0, "binary": 0, "secret": 1, "historical": 0}
+    },
+    "note": "规则块构成，不代表科学精度。"
+  },
+  "items": [
+    {
+      "id": "rule-001",
+      "source": {"path": "SKILL.md", "line": 10, "section": "工作流"},
+      "summary": "拆解目标任务。",
+      "asset_type": "unknown",
+      "artifact_role": "instruction",
+      "lifecycle": "needs_test",
+      "replacement_evidence": {"level": "E1", "basis": "只读文本判断，没有对照。"},
+      "behavior_validation": {"status": "untested", "evidence": "", "checks_run": 0},
+      "dependency": {"state": "entrypoint", "external_callers_checked": false},
+      "confidence": "low",
+      "reason": "没有无 Skill 对照。",
+      "recommendation": "needs_comparison",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["所有真实任务"]}
+    },
+    {
+      "id": "artifact-001",
+      "source": {"path": ".env", "line": 0, "section": "敏感文件，仅报告存在"},
+      "summary": "检测到敏感配置文件，未读取内容。",
+      "asset_type": "not_applicable",
+      "artifact_role": "secret",
+      "lifecycle": "not_applicable",
+      "replacement_evidence": {"level": "E0", "basis": "敏感文件不参与模型替代判断。"},
+      "behavior_validation": {"status": "not_applicable", "evidence": "", "checks_run": 0},
+      "dependency": {"state": "external_unknown", "external_callers_checked": false},
+      "confidence": "low",
+      "reason": "不得读取或自动处置秘密文件。",
+      "recommendation": "human_review",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["外部调用方"]}
+    }
+  ],
+  "human_decisions": ["是否安排对照测试"],
+  "not_performed": ["未修改、移动、归档或删除目标 Skill"]
+}

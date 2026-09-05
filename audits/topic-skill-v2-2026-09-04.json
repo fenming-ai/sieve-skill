@@ -1,0 +1,44 @@
+{
+  "schema_version": "sieve-audit/v2",
+  "target": {"path": "~/repos/topic-skill", "name": "topic-skill"},
+  "audit_context": {"model": "unknown", "provider": "unknown", "model_version": "unknown", "audited_at": "2026-09-04T20:20:00+08:00"},
+  "summary": {
+    "recommendation": "needs_comparison", "confidence": "low",
+    "counts": {
+      "asset_types": {"generic": 0, "temporary": 0, "proprietary": 2, "mixed": 1, "unknown": 0, "not_applicable": 0},
+      "artifact_roles": {"instruction": 1, "reference": 1, "source": 0, "test": 1, "asset": 0, "metadata": 0, "generated": 0, "binary": 0, "secret": 0, "historical": 0}
+    },
+    "note": "边界、脱敏与下游契约应保留；固定 5 条和 2+2+1 配额需做模型对照。"
+  },
+  "items": [
+    {
+      "id": "topic-workflow", "source": {"path": "SKILL.md", "line": 31, "section": "多源合并"},
+      "summary": "统一输出 5 条并按固定路线分配。", "asset_type": "mixed", "artifact_role": "instruction", "lifecycle": "needs_test",
+      "replacement_evidence": {"level": "E1", "basis": "输出合同有业务价值，固定配额是否必要没有有/无 Skill 对照。"},
+      "behavior_validation": {"status": "passed", "evidence": "python3 tests/check_10_topic_example.py 通过，验证 10 条示例、长度、排序和理由。", "checks_run": 1},
+      "dependency": {"state": "entrypoint", "external_callers_checked": false}, "confidence": "low",
+      "reason": "不能把稳定输出合同与模型相关的固定配额视为同一类资产。", "recommendation": "needs_comparison", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["10 条示例合同"], "not_verified": ["真实选题质量", "外部调用方"]}
+    },
+    {
+      "id": "topic-boundary", "source": {"path": "SKILL.md", "line": 154, "section": "反模式"},
+      "summary": "来源路、脱敏依据和不越界到正文/标题的协作契约。", "asset_type": "proprietary", "artifact_role": "reference", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "这是本地内容流水线的角色边界，模型无法从通用知识恢复。"},
+      "behavior_validation": {"status": "not_applicable", "evidence": "", "checks_run": 0},
+      "dependency": {"state": "direct", "external_callers_checked": false}, "confidence": "low",
+      "reason": "删除会使上游与正文生产职责混淆。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["外部绝对路径目标是否仍兼容"]}
+    },
+    {
+      "id": "topic-contract-test", "source": {"path": "tests/check_10_topic_example.py", "line": 1, "section": "示例验收"},
+      "summary": "对示例数量、长度、排序和理由做确定性校验。", "asset_type": "proprietary", "artifact_role": "test", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "测试是独立验收资产，不是提示词冗余。"},
+      "behavior_validation": {"status": "passed", "evidence": "专用脚本实际执行并输出 OK。", "checks_run": 1},
+      "dependency": {"state": "unreferenced", "external_callers_checked": false}, "confidence": "low",
+      "reason": "它能防止输出合同静默漂移，但尚未被入口直接引用。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["示例合同"], "not_verified": ["CI 调用关系"]}
+    }
+  ],
+  "human_decisions": ["是否对固定 5 条和 2+2+1 配额做有/无 Skill 对照"],
+  "not_performed": ["未修改、移动、归档或删除目标 Skill"]
+}

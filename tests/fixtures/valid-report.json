@@ -1,0 +1,53 @@
+{
+  "schema_version": "sieve-audit/v1",
+  "target": {
+    "path": "/tmp/example-skill",
+    "name": "example-skill"
+  },
+  "audit_context": {
+    "model": "unknown",
+    "provider": "unknown",
+    "model_version": "unknown",
+    "audited_at": "2026-09-04T12:00:00+08:00",
+    "task_samples": 0,
+    "compared_without_skill": false
+  },
+  "summary": {
+    "recommendation": "needs_comparison",
+    "confidence": "low",
+    "counts": {
+      "generic": 0,
+      "temporary": 0,
+      "proprietary": 0,
+      "mixed": 0,
+      "unknown": 1
+    },
+    "note": "比例仅表示已识别规则块构成，不代表科学精度。"
+  },
+  "items": [
+    {
+      "id": "rule-001",
+      "source": {
+        "path": "SKILL.md",
+        "line": 12,
+        "section": "工作流"
+      },
+      "summary": "先拆解目标任务",
+      "classification": "unknown",
+      "lifecycle": "needs_test",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "尚未进行无 Skill 对照测试。",
+      "recommendation": "needs_comparison",
+      "requires_human_approval": true,
+      "scope": {
+        "models_tested": [],
+        "tasks_tested": [],
+        "not_verified": ["所有模型与真实任务"]
+      }
+    }
+  ],
+  "human_decisions": ["是否安排无 Skill 对照测试"],
+  "not_performed": ["未修改、移动、归档或删除目标 Skill"]
+}
+

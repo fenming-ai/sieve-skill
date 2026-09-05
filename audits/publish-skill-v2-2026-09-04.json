@@ -1,0 +1,53 @@
+{
+  "schema_version": "sieve-audit/v2",
+  "target": {"path": "~/repos/publish-skill", "name": "publish-skill"},
+  "audit_context": {"model": "unknown", "provider": "unknown", "model_version": "unknown", "audited_at": "2026-09-04T20:10:00+08:00"},
+  "summary": {
+    "recommendation": "keep", "confidence": "low",
+    "counts": {
+      "asset_types": {"generic": 0, "temporary": 0, "proprietary": 2, "mixed": 0, "unknown": 0, "not_applicable": 2},
+      "artifact_roles": {"instruction": 1, "reference": 0, "source": 1, "test": 0, "asset": 0, "metadata": 0, "generated": 0, "binary": 1, "secret": 1, "historical": 0}
+    },
+    "note": "权限边界、发布前校验和严格删除属于确定性控制面，不应按模型能力删除。"
+  },
+  "items": [
+    {
+      "id": "publish-safety", "source": {"path": "SKILL.md", "line": 57, "section": "严格删除流程"},
+      "summary": "删除逐篇确认、标题精确匹配和副作用分级。", "asset_type": "proprietary", "artifact_role": "instruction", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "安全和权限规则是控制策略，不因模型更强而失效。"},
+      "behavior_validation": {"status": "passed", "evidence": "go test ./... 通过 6 个含测试的 package；1 个 package 无测试文件。", "checks_run": 6},
+      "dependency": {"state": "entrypoint", "external_callers_checked": false}, "confidence": "low",
+      "reason": "它约束不可逆操作和授权范围。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["Go 单元测试"], "not_verified": ["真实平台端到端", "外部调用方"]}
+    },
+    {
+      "id": "publish-code", "source": {"path": "internal/publish", "line": 0, "section": "发布实现"},
+      "summary": "SHA、标题、素材和回执校验的确定性实现。", "asset_type": "proprietary", "artifact_role": "source", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "模型对话不能替代可执行校验和平台 API 实现。"},
+      "behavior_validation": {"status": "passed", "evidence": "go test ./... 全部通过。", "checks_run": 6},
+      "dependency": {"state": "unreferenced", "external_callers_checked": false}, "confidence": "low",
+      "reason": "代码资产交付副作用并验证结果。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["Go 单元测试"], "not_verified": ["真实凭据联网发布"]}
+    },
+    {
+      "id": "publish-binary", "source": {"path": "publish", "line": 0, "section": "本地二进制"},
+      "summary": "检测到本地构建二进制，未解析内容。", "asset_type": "not_applicable", "artifact_role": "binary", "lifecycle": "not_applicable",
+      "replacement_evidence": {"level": "E0", "basis": "二进制不参与模型替代判断。"},
+      "behavior_validation": {"status": "not_applicable", "evidence": "", "checks_run": 0},
+      "dependency": {"state": "unreferenced", "external_callers_checked": false}, "confidence": "low",
+      "reason": "需人工判断是否为可再生成构建产物。", "recommendation": "human_review", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["二进制来源"]}
+    },
+    {
+      "id": "publish-secret", "source": {"path": ".env", "line": 0, "section": "敏感文件，仅报告存在"},
+      "summary": "检测到敏感配置，未读取内容。", "asset_type": "not_applicable", "artifact_role": "secret", "lifecycle": "not_applicable",
+      "replacement_evidence": {"level": "E0", "basis": "敏感文件不参与替代判断。"},
+      "behavior_validation": {"status": "not_applicable", "evidence": "", "checks_run": 0},
+      "dependency": {"state": "external_unknown", "external_callers_checked": false}, "confidence": "low",
+      "reason": "凭据必须保持保护并由人工管理。", "recommendation": "human_review", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["内容", "轮换状态"]}
+    }
+  ],
+  "human_decisions": ["是否清理可再生成二进制", "是否做真实平台端到端验证"],
+  "not_performed": ["未修改、移动、归档或删除目标 Skill"]
+}

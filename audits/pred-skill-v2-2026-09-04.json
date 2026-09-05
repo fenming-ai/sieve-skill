@@ -1,0 +1,44 @@
+{
+  "schema_version": "sieve-audit/v2",
+  "target": {"path": "~/repos/pred-skill", "name": "pred-skill"},
+  "audit_context": {"model": "unknown", "provider": "unknown", "model_version": "unknown", "audited_at": "2026-09-04T20:40:00+08:00"},
+  "summary": {
+    "recommendation": "keep", "confidence": "low",
+    "counts": {
+      "asset_types": {"generic": 0, "temporary": 0, "proprietary": 3, "mixed": 0, "unknown": 0, "not_applicable": 0},
+      "artifact_roles": {"instruction": 1, "reference": 0, "source": 1, "test": 0, "asset": 0, "metadata": 0, "generated": 0, "binary": 0, "secret": 0, "historical": 1}
+    },
+    "note": "最终发布稿偏好、历史纠错和完整链路评测是私有资产；密度区间已被正确降级为提示。"
+  },
+  "items": [
+    {
+      "id": "pred-policy", "source": {"path": "SKILL.md", "line": 8, "section": "目标"},
+      "summary": "按语义职责预测强调，不机械追求固定密度。", "asset_type": "proprietary", "artifact_role": "instruction", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "规则绑定用户最终发布偏好，没有无 Skill 模型对照。"},
+      "behavior_validation": {"status": "passed", "evidence": "python3 -m pytest -q：27 项通过。", "checks_run": 27},
+      "dependency": {"state": "entrypoint", "external_callers_checked": false}, "confidence": "low",
+      "reason": "模型无法凭通用知识恢复私有强调偏好。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["强调预测单元与集成测试"], "not_verified": ["新文章人工接受率", "外部调用方"]}
+    },
+    {
+      "id": "pred-history", "source": {"path": "data/cases.jsonl", "line": 0, "section": "历史发布案例"},
+      "summary": "最终发布载体与历史误判组成的偏好金标准。", "asset_type": "proprietary", "artifact_role": "historical", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "私有发布结果不可由模型参数再生。"},
+      "behavior_validation": {"status": "not_applicable", "evidence": "", "checks_run": 0},
+      "dependency": {"state": "direct", "external_callers_checked": false}, "confidence": "low",
+      "reason": "这是可持续学习的业务记忆，应与通用规则分开保存。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["样本代表性"]}
+    },
+    {
+      "id": "pred-evaluation", "source": {"path": "scripts/evaluate_end_to_end.py", "line": 1, "section": "完整链路回放"},
+      "summary": "用原稿、排版稿和人工确认稿评估最终效果。", "asset_type": "proprietary", "artifact_role": "source", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "独立评测是判断替代性的前提，本身不能被被测模型替代。"},
+      "behavior_validation": {"status": "passed", "evidence": "pytest 共 27 项通过，覆盖脚本 CLI、历史误判和端到端评测。", "checks_run": 27},
+      "dependency": {"state": "direct", "external_callers_checked": false}, "confidence": "low",
+      "reason": "它防止用相似度或自评冒充最终发布效果。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["端到端评测回归"], "not_verified": ["跨模型泛化"]}
+    }
+  ],
+  "human_decisions": ["是否新增更多最终发布案例以扩大评测覆盖"],
+  "not_performed": ["未修改、移动、归档或删除目标 Skill"]
+}

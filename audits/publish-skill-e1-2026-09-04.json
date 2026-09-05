@@ -1,0 +1,197 @@
+{
+  "schema_version": "sieve-audit/v1",
+  "target": {
+    "path": "~/repos/publish-skill",
+    "name": "publish-skill"
+  },
+  "audit_context": {
+    "model": "GPT-5",
+    "provider": "OpenAI",
+    "model_version": "unknown",
+    "audited_at": "2026-09-04T16:23:28+08:00",
+    "task_samples": 0,
+    "compared_without_skill": false
+  },
+  "summary": {
+    "recommendation": "keep",
+    "confidence": "low",
+    "counts": {
+      "generic": 0,
+      "temporary": 2,
+      "proprietary": 8,
+      "mixed": 1,
+      "unknown": 1
+    },
+    "note": "入口简洁，核心资产是外部副作用授权、发布前身份校验、创建后反查、严格删除和部分失败状态。当前不建议压缩这些边界，只建议把构建产物与时效错误码和长期规则分层。比例仅表示本次识别的 12 个规则块构成，不代表科学精度。"
+  },
+  "items": [
+    {
+      "id": "rule-001",
+      "source": {"path": "SKILL.md", "line": 8, "section": "职责与收口路由"},
+      "summary": "只消费排版 HTML，不改正文，不执行正式群发或发布后收口。",
+      "classification": "proprietary",
+      "lifecycle": "active",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "它定义跨 Skill 职责和允许产生的外部副作用范围，不属于普通发布教程。",
+      "recommendation": "keep",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["完整内容生产链集成"]}
+    },
+    {
+      "id": "rule-002",
+      "source": {"path": "SKILL.md", "line": 16, "section": "工作流"},
+      "summary": "区分只读检查与创建草稿授权，并禁止泄露凭证。",
+      "classification": "proprietary",
+      "lifecycle": "active",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "这是权限和秘密边界，模型能力增强不会降低其必要性。",
+      "recommendation": "keep",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["真实凭证和网络环境"]}
+    },
+    {
+      "id": "rule-003",
+      "source": {"path": "internal/release/manifest.go", "line": 39, "section": "release manifest 校验"},
+      "summary": "重新计算文件 SHA，并核对选定标题、正文和排版稿。",
+      "classification": "proprietary",
+      "lifecycle": "active",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "确定性校验阻止旧稿、错标题和漂移文件进入外部平台，且已有单元测试覆盖。",
+      "recommendation": "keep",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["真实发布清单"]}
+    },
+    {
+      "id": "rule-004",
+      "source": {"path": "SKILL.md", "line": 31, "section": "创建后反查"},
+      "summary": "草稿创建后必须反查标题，只有三项回执同时成立才算成功。",
+      "classification": "proprietary",
+      "lifecycle": "active",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "它处理外部接口可能出现的假成功和错对象风险，属于验收协议。",
+      "recommendation": "keep",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["真实微信草稿创建"]}
+    },
+    {
+      "id": "rule-005",
+      "source": {"path": "internal/wechat/drafts.go", "line": 56, "section": "草稿查询与分页"},
+      "summary": "实现自动分页、空结果停止和临时预览地址获取。",
+      "classification": "mixed",
+      "lifecycle": "active",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "分页动作通用，但接口字段、停止条件和临时 URL 语义由具体平台决定。",
+      "recommendation": "keep",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["真实分页边界", "后台手动发表记录"]}
+    },
+    {
+      "id": "rule-006",
+      "source": {"path": "SKILL.md", "line": 57, "section": "严格删除流程"},
+      "summary": "逐次确认完整标题与 media_id，代码再次核对标题后才允许删除。",
+      "classification": "proprietary",
+      "lifecycle": "active",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "这是不可逆操作的双层防线，必须优先保留。",
+      "recommendation": "keep",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["真实删除操作，本次不应执行"]}
+    },
+    {
+      "id": "rule-007",
+      "source": {"path": "SKILL.md", "line": 84, "section": "失败处理"},
+      "summary": "区分未创建、已创建但反查失败和已上传部分素材等状态。",
+      "classification": "proprietary",
+      "lifecycle": "active",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "它保存外部写操作的真实部分失败语义，避免将 created=true 误报为完全失败或成功。",
+      "recommendation": "keep",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["真实 API 部分失败"]}
+    },
+    {
+      "id": "rule-008",
+      "source": {"path": "internal/publish/html_source.go", "line": 68, "section": "微信 HTML 归一化"},
+      "summary": "压缩列表标签间空白并保留 Prompt 的显式换行。",
+      "classification": "proprietary",
+      "lifecycle": "active",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "规则来自真实平台解析差异，并有对应 learn 与回归测试，不是模型可替代的通用写作建议。",
+      "recommendation": "keep",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["平台未来解析变化"]}
+    },
+    {
+      "id": "rule-009",
+      "source": {"path": "internal/wechat/service.go", "line": 327, "section": "远程图片地址校验"},
+      "summary": "拒绝本地、私网、链路本地、多播和非标准端口下载目标。",
+      "classification": "proprietary",
+      "lifecycle": "active",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "属于网络安全边界，不能因模型或调用方式变化而弱化。",
+      "recommendation": "keep",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["DNS 重绑定等更复杂网络攻击"]}
+    },
+    {
+      "id": "rule-010",
+      "source": {"path": "internal/wechat/errors.go", "line": 44, "section": "微信错误码提示"},
+      "summary": "将当前已知平台错误码映射为可执行提示。",
+      "classification": "temporary",
+      "lifecycle": "task_dependent",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "错误码和限制受外部平台变化影响，适合独立维护，不应和长期授权原则混在一起判断。",
+      "recommendation": "externalize",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["平台最新错误码与字段限制"]}
+    },
+    {
+      "id": "rule-011",
+      "source": {"path": "SKILL.md", "line": 19, "section": "check 与 draft 命令顺序"},
+      "summary": "先执行检查，再执行创建草稿命令。",
+      "classification": "unknown",
+      "lifecycle": "model_dependent",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "顺序本身看似通用，但与授权、manifest 和副作用边界紧密相连；未做无 Skill 对照，不能单独判为通用冗余。",
+      "recommendation": "needs_comparison",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["无 Skill 时是否仍能稳定遵守发布顺序"]}
+    },
+    {
+      "id": "rule-012",
+      "source": {"path": "publish", "line": 0, "section": "仓库根目录构建产物"},
+      "summary": "仓库中存在约 9.7MB 的 Mach-O 可执行文件。",
+      "classification": "temporary",
+      "lifecycle": "historical",
+      "evidence_level": "E1",
+      "confidence": "low",
+      "reason": "这是平台相关构建产物，不是模型运行时规则；是否保留应由发布与分发方式决定。",
+      "recommendation": "human_review",
+      "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": [], "not_verified": ["是否有外部流程直接依赖该二进制"]}
+    }
+  ],
+  "human_decisions": [
+    "是否继续把平台错误码保留在代码中独立维护",
+    "是否有外部流程依赖仓库根目录的 Mach-O 构建产物",
+    "是否为无 Skill 时的发布顺序与授权遵循安排对照测试"
+  ],
+  "not_performed": [
+    "未修改、移动、归档或删除目标 Skill",
+    "未读取 .env 内容或使用任何真实凭证",
+    "未创建、发布或删除微信公众号草稿",
+    "未进行加载与不加载 Skill 的模型对照"
+  ]
+}
+

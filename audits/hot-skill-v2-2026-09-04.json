@@ -1,0 +1,44 @@
+{
+  "schema_version": "sieve-audit/v2",
+  "target": {"path": "~/repos/hot-skill", "name": "hot-skill"},
+  "audit_context": {"model": "unknown", "provider": "unknown", "model_version": "unknown", "audited_at": "2026-09-04T20:30:00+08:00"},
+  "summary": {
+    "recommendation": "keep", "confidence": "low",
+    "counts": {
+      "asset_types": {"generic": 0, "temporary": 0, "proprietary": 2, "mixed": 1, "unknown": 0, "not_applicable": 0},
+      "artifact_roles": {"instruction": 1, "reference": 0, "source": 2, "test": 0, "asset": 0, "metadata": 0, "generated": 0, "binary": 0, "secret": 0, "historical": 0}
+    },
+    "note": "抓取与排序代码、情报边界和失败处理应保留；平台数量和时间窗口属于可调策略。"
+  },
+  "items": [
+    {
+      "id": "hot-policy", "source": {"path": "SKILL.md", "line": 29, "section": "职责"},
+      "summary": "只产情报池、不产选题，并规定 Top50 信号配额。", "asset_type": "mixed", "artifact_role": "instruction", "lifecycle": "task_dependent",
+      "replacement_evidence": {"level": "E1", "basis": "职责边界是专有合同；Top50、20% 和 72 小时窗口需随业务验证。"},
+      "behavior_validation": {"status": "passed", "evidence": "python3 -m unittest discover -s tests -v：64 项通过。", "checks_run": 64},
+      "dependency": {"state": "entrypoint", "external_callers_checked": false}, "confidence": "low",
+      "reason": "策略参数可调整，但不能因此删除上下游边界。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["排名、抓取、编辑信号单元测试"], "not_verified": ["全部平台实时可用性", "外部调用方"]}
+    },
+    {
+      "id": "hot-fetchers", "source": {"path": "hot_skill/fetchers", "line": 0, "section": "平台抓取器"},
+      "summary": "多平台抓取、超时降级和字段归一化实现。", "asset_type": "proprietary", "artifact_role": "source", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "模型本身不提供这些平台连接器和确定性错误处理。"},
+      "behavior_validation": {"status": "passed", "evidence": "64 项测试覆盖缺少密钥、超时、限流及字段映射。", "checks_run": 64},
+      "dependency": {"state": "unreferenced", "external_callers_checked": false}, "confidence": "low",
+      "reason": "这是可执行连接资产，不是通用提示词。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["抓取器异常路径"], "not_verified": ["生产 API 端到端"]}
+    },
+    {
+      "id": "hot-ranking", "source": {"path": "hot_skill/ranking.py", "line": 1, "section": "排序与去重"},
+      "summary": "去重、聚类、热度归一化和不足不编造。", "asset_type": "proprietary", "artifact_role": "source", "lifecycle": "active",
+      "replacement_evidence": {"level": "E1", "basis": "代码与历史失败约束形成可回归的业务资产。"},
+      "behavior_validation": {"status": "passed", "evidence": "64 项测试中包含排序、重复事件、过期文章和短缺处理。", "checks_run": 64},
+      "dependency": {"state": "unreferenced", "external_callers_checked": false}, "confidence": "low",
+      "reason": "保留可重复的排名行为和反编造约束。", "recommendation": "keep", "requires_human_approval": true,
+      "scope": {"models_tested": [], "tasks_tested": ["排序回归"], "not_verified": ["真实流量效果"]}
+    }
+  ],
+  "human_decisions": ["是否根据真实内容表现调整 Top50、20% 和 72 小时参数"],
+  "not_performed": ["未修改、移动、归档或删除目标 Skill"]
+}

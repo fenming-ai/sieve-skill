@@ -1,0 +1,4 @@
+timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
+2026-09-04T21:00:00+08:00	baseline	sieve-skill	-	86.1	baseline	-	runtime_warn=0; baseline_dim8=4; 18_tests_passed	full_test
+2026-09-04T21:20:00+08:00	9f27f85	sieve-skill	86.1	89.2	keep	失败模式与检查点	新增处置前红灯门和6类三段式兜底; dim8=8.5	full_test
+2026-09-04T21:35:00+08:00	ab56cef	sieve-skill	89.2	92.1	keep	边界恢复语义	补目标无效兜底并消除人工确认循环歧义; dim8=9.5	full_test

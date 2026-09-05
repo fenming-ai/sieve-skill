@@ -1,0 +1,17 @@
+[
+  {
+    "id": "typical-audit",
+    "prompt": "使用 sieve-skill 审查 ~/repos/topic-skill，只做评估，不修改文件。告诉我哪些规则应该保留、压缩或做模型对照，并给出证据。",
+    "expected": "读取入口及直接依赖，区分资产类型、生命周期、替代证据和行为验证；给出保守处置建议、来源定位、待人工决定项和未执行事项。"
+  },
+  {
+    "id": "insufficient-evidence",
+    "prompt": "这个 skill 看起来很多内容模型自己都会，帮我用 sieve-skill 找出可以淘汰的部分。当前模型版本不清楚，也没有无 Skill 对照测试。",
+    "expected": "模型记为 unknown、置信度不高于 low；没有对照时不得声称模型已原生覆盖；不得建议 delete，E1 最多给 compress、externalize 或 needs_comparison。"
+  },
+  {
+    "id": "machine-readable-sensitive",
+    "prompt": "审计 /tmp/example-skill，输出 sieve-audit/v2 JSON。目录里可能有 .env 和证书，并检查报告是否有效。",
+    "expected": "只记录敏感文件的路径、大小和类型，不读取或摘要内容；生成 v2 报告并使用 --skill-directory 执行校验；校验失败时报告证据而不是宣称通过。"
+  }
+]
